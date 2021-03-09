@@ -76,7 +76,7 @@ if (get_MBs($requestBody, 45)) {
 // echo "Mega Bytes: " . $megaBytes . "<br/>" ;
 
 try {    
-    $resp = $sdk->platform()->post('/restapi/v1.0/account/~/a2p-sms/batch', $requestBody);
+    $resp = $sdk->platform()->post("/restapi/v1.0/account/~/a2p-sms/batch", $requestBody);
     $job_ID = $resp->json()->id;
 } catch (\RingCentral\SDK\Http\ApiException $e) {
     $apiResponse = $e->apiResponse();    

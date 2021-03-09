@@ -25,8 +25,8 @@ if (is_object($sdk )) {
 $params = array( 'from' => ringcentral_get_from_phone() );
 
 try {
-//     $resp = $sdk->platform()->get('/account/~/extension/~/sms/opt-outs', $params);    
-    $resp = $sdk->platform()->get('/restapi/v1.0/account/~/a2p-sms/opt-outs', $params);    
+//     $resp = $sdk->platform()->get("/account/~/extension/~/sms/opt-outs", $params);    
+    $resp = $sdk->platform()->get("/restapi/v1.0/account/~/a2p-sms/opt-outs", $params);    
 } catch (\RingCentral\SDK\Http\ApiException $e) {    
     $apiResponse = $e->apiResponse();
     // craft a friendly message here.    
