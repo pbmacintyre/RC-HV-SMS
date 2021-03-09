@@ -4,7 +4,7 @@
 * Copyright (C) 2021 Paladin Business Solutions
 */
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
 
 /* ====================================== */
 /* bring in generic ringcentral functions */
@@ -40,7 +40,6 @@ try {
         array('from' => array('phoneNumber' => $from),            
             'to'   => $to,
             'text' => $message ) );
-    $job_ID = $resp->json()->id;
 } catch (\RingCentral\SDK\Http\ApiException $e) {
     $apiResponse = $e->apiResponse();    
     // craft a friendly message here.
@@ -50,24 +49,11 @@ try {
 //     echo "</pre>" ;
 }
 
-// $json_data = json_decode($resp->json(), true) ;
 echo "Request ID: " . $resp->json()->id;
 
 echo "<pre>" ;
 var_dump($resp->json());
 echo "</pre>" ;
-
-/*
-echo "Job ID: " . $json_data->id . "<br/>";
-
-//     echo "Job ID: " . $job_ID . "<br/>";
-    echo "<pre>" ;
-    print_r($resp->json());
-    echo "</pre>" ;
-  */  
-    
-    
-    
     
     
     

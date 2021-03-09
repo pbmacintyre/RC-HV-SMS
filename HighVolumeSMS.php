@@ -31,7 +31,7 @@ $from = ringcentral_get_from_phone();
 
 /*
 // SQL code for getting client numbers and building array of these numbers.
-$sql = "SELECT `mobile_number` FROM `ringcentral_clients` LIMIT 3" ;
+$sql = "SELECT `mobile_number` FROM `ringcentral_clients` LIMIT 8000" ;
 $result = $db->query($sql);
 
 while ($row = $result->fetch_assoc()){
@@ -51,7 +51,7 @@ $requestBody = array(
 /* ======================== */
 
 // SQL code for getting client names and numbers.
-$sql = "SELECT `first_name`,`mobile_number` FROM `ringcentral_clients` LIMIT 3" ;
+$sql = "SELECT `first_name`,`mobile_number` FROM `ringcentral_clients` LIMIT 8000" ;
 $result = $db->query($sql);
 
 while ($row = $result->fetch_assoc()){
@@ -77,6 +77,7 @@ if (get_MBs($requestBody, 45)) {
 
 try {    
     $resp = $sdk->platform()->post('/restapi/v1.0/account/~/a2p-sms/batch', $requestBody);
+    $job_ID = $resp->json()->id;
 } catch (\RingCentral\SDK\Http\ApiException $e) {
     $apiResponse = $e->apiResponse();    
     // craft a friendly message here.
