@@ -81,7 +81,7 @@ function ringcentral_get_from_phone() {
 /* outgoing array to ensure it is not    */
 /* over 50 MB - this is an estimate ONLY */
 /* ===================================== */
-function get_MBs($requestBody) {
+function get_MBs($requestBody, $testSize) {
     $bytes = 0 ;
     foreach ($requestBody as $value ){
         if (is_array($value)) {
@@ -96,7 +96,8 @@ function get_MBs($requestBody) {
             $bytes += strlen($value) ;
         }
     }
-    return $bytes / 1000000 ;    
+    $mbs = $bytes / 1000000 ;
+    return $mbs > $testSize ? true : false ;
 }
 /* ============================= */
 /* generate a large text sample  */

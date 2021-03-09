@@ -68,8 +68,7 @@ $requestBody = array(
 );
 
 // check the estimated size of the outgoing request.
-$megaBytes = get_MBs($requestBody) ;
-if ($megaBytes > 45) {
+if (get_MBs($requestBody, 45)) {
     echo "The MB Size of the HV SMS request exceeds size limits" . "<br/>" ;
     echo "Mega Bytes: " . $megaBytes . "<br/>" ;
     exit();
