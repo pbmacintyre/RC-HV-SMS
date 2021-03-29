@@ -4,7 +4,7 @@
 * Copyright (C) 2021 Paladin Business Solutions
 */
 error_reporting(E_ALL);
-ini_set('display_errors', 0);
+ini_set('display_errors', 1);
 
 /* ====================================== */
 /* bring in generic ringcentral functions */
@@ -13,7 +13,7 @@ require_once("ringcentral-functions.inc");
 
 $db = db_connect();
 
-$sdk = ringcentral_invoke_sdk() ;
+$sdk = ringcentral_invoke_sandbox_sdk() ;
 if (is_object($sdk )) { 
     echo "SDK Connected... <br/>";
 } else {

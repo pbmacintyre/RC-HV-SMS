@@ -19,36 +19,102 @@ function db_connect() {
 /* ============================================= */
 /* Get RingCentral credentials from the Database */
 /* ============================================= */
-function sdk_credentials(){
+function sdk_sandbox_credentials(){
 
     global $db ;
     
-    $sql = "SELECT * FROM `ringcentral_control` WHERE `ringcentral_control_id` = 1" ;
+    $sql = "SELECT * FROM `ringcentral_control` WHERE `ringcentral_sandbox` = 1" ;
     $result = $db->query($sql);
     $row = $result->fetch_assoc() ;
-    
+         
     $rc_handshake = array(
         "client_id"        => $row['client_id'],
         "client_secret"    => $row['client_secret'],
         "user_name"        => $row['ringcentral_user_name'],
         "extension"        => $row['ringcentral_extension'] ,
-        "password"         => $row['ringcentral_password'] ,
-        "sandbox"          => $row['ringcentral_sandbox']
+        "password"         => $row['ringcentral_password']        
     );
     return $rc_handshake ;    
 }
-/* ========================================================== */
-/* invoke RingCental SDK connection with provided credentials */
-/* ========================================================== */
-function ringcentral_invoke_sdk() {
+/* ================================================================== */
+/* invoke RingCental Sandbox SDK connection with provided credentials */
+/* ================================================================== */
+function ringcentral_invoke_sandbox_sdk() {
     // Include Libraries
     require('vendor/autoload.php');
     // get an array of information to connect to the SDK
-    $rc_handshake = sdk_credentials();
+
+    $rc_handshake = sdk_sandbox_credentials();
+    echo "<pre>";
+    var_dump($rc_handshake);
+    echo "</pre>";
+    /* ============================= */    
+    $rcsdk = new RingCentral\SDK\SDK('H1A2heI0S9eYY8NxNb1Pug', 
+        't99-8eDRRPSmknVGTVG5IgwUw-49IxR-K6bCw_TvCLKg', 'https://platform.devtest.ringcentral.com');
+    $platform = $rcsdk->platform();
+    $platform->login('13128589925', '101', 'Char1tyMM');
+    /* ============================= */
+    echo "connection made... ";
+    
+//     $rc_handshake = sdk_sandbox_credentials();
     
     // Use sandbox Client
-    $sdk = new RingCentral\SDK\SDK($rc_handshake['client_id'],
-        $rc_handshake['client_secret'], RingCentral\SDK\SDK::SERVER_SANDBOX);
+    $sdk = new RingCentral\SDK\SDK($rc_handshake['client_id'], 
+        $rc_handshake['client_secret'], 'https://platform.devtest.ringcentral.com');    
+    
+    // attempt to Login via API
+    try {
+        $sdk->platform()->login($rc_handshake['user_name'], 
+            $rc_handshake['extension'], $rc_handshake['password']);
+        $result = $sdk ;
+    } catch (\RingCentral\SDK\Http\ApiException $e) {
+        // $result = false ;
+        echo "<pre>";
+        var_dump($rc_handshake); 
+        echo "</pre>"; 
+        $result = "<h2>Error connecting to the SDK, response information: </h2>" . $e ;
+    }
+    return $result ;    
+}
+/* ======================================================== */
+/* Get RingCentral production credentials from the Database */
+/* ======================================================== */
+function sdk_prod_credentials(){
+
+    global $db ;
+    
+    $sql = "SELECT * FROM `ringcentral_control` WHERE `ringcentral_control_id` = 3" ;
+    $result = $db->query($sql);
+    $row = $result->fetch_assoc() ;
+         
+    $rc_handshake = array(
+        "client_id"        => $row['client_id'],
+        "client_secret"    => $row['client_secret'],
+        "user_name"        => $row['ringcentral_user_name'],
+        "extension"        => $row['ringcentral_extension'],
+        "password"         => $row['ringcentral_password'],        
+        "rc_from"          => $row['ringcentral_from']        
+    );
+    return $rc_handshake ;    
+}
+/* ===================================================================== */
+/* invoke RingCental Production SDK connection with provided credentials */
+/* ===================================================================== */
+function ringcentral_invoke_prod_sdk() {
+    // Include Libraries
+    require('vendor/autoload.php');
+    // get an array of information to connect to the SDK
+    $rc_handshake = sdk_prod_credentials();
+    
+    echo "<pre>";
+    var_dump($rc_handshake);
+    echo "</pre>";
+    
+   // Use Production Client
+//    $sdk = new RingCentral\SDK\SDK($rc_handshake['client_id'],
+//         $rc_handshake['client_secret'], RingCentral\SDK\SDK::SERVER_PRODUCTION);
+   $sdk = new RingCentral\SDK\SDK($rc_handshake['client_id'],
+        $rc_handshake['client_secret'], 'https://platform.ringcentral.com');
 
     // attempt to Login via API
     try {
@@ -57,24 +123,27 @@ function ringcentral_invoke_sdk() {
         $result = $sdk ;
     } catch (\RingCentral\SDK\Http\ApiException $e) {
         // $result = false ;
+//     echo "<pre>";
+//     var_dump($rc_handshake);
+//     echo "</pre>";
         $result = "<h2>Error connecting to the SDK, response information: </h2>" . $e ;
     }
-    return $result ;    
+    return $result ;
 }
 /* ======================================== */
 /* get from phone number from control table */
 /* it is stored in the user_name field      */
 /* ======================================== */
-function ringcentral_get_from_phone() {
+function ringcentral_get_from_phone($control_id) {
     global $db;
     
-    $sql = "SELECT `ringcentral_user_name` 
+    $sql = "SELECT `ringcentral_from` 
         FROM `ringcentral_control` 
-        WHERE `ringcentral_control_id` = 1" ;
+        WHERE `ringcentral_control_id` = $control_id" ;
     $result = $db->query($sql);
     $row = $result->fetch_assoc() ;    
         
-    return $row['ringcentral_user_name'] ;
+    return $row['ringcentral_from'] ;
 }
 /* ===================================== */
 /* Count all the text (bytes) in the     */ 
