@@ -2,8 +2,6 @@
 /*
  * Copyright (C) 2021 Paladin Business Solutions
  */
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
 
 require_once("ringcentral-functions.inc");
 
@@ -22,17 +20,13 @@ if (is_object($sdk )) {
 /* ==================================== */
 /* us the batch ID to check job status  */
 /* ==================================== */
-$batch_id = "46b136f3-b404-4d94-ac42-df8b17e21ee0" ;    
-
+$batch_id = "e884f3a1-8446-4780-b4b2-56edc98db1eb" ;    
 
 try {
-//     $platform = $sdk->platform();
-//     $platform->login( "username", "extension_number", "password" );
-    
     $resp = $sdk->platform()->get("/restapi/v1.0/account/~/a2p-sms/batch/$batch_id");
     echo "<pre>" ;
     print_r ($resp->json());
-    echo "</pre>" ;
+    echo "</pre>" ;    
 } catch (\RingCentral\SDK\Http\ApiException $e) {    
     $apiResponse = $e->apiResponse();
     // craft a friendly message here.    

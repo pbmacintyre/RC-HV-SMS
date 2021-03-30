@@ -2,14 +2,12 @@
 /*
  * Copyright (C) 2021 Paladin Business Solutions
  */
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
 
 require_once("ringcentral-functions.inc");
 
 $db = db_connect();
 
-$sdk = ringcentral_invoke_sdk() ;
+$sdk = ringcentral_invoke_prod_sdk() ;
 if (is_object($sdk )) {
     echo "SDK Connected... <br/>";
 } else {
@@ -22,11 +20,13 @@ if (is_object($sdk )) {
 /* now send a simple SMS message */
 /* get the phone number from which the message will be sent */
     
-$params = array( 'from' => ringcentral_get_from_phone() );
+$params = array( 'from' => ringcentral_get_prod_from_phone(3) );
 
-try {
-//     $resp = $sdk->platform()->get("/account/~/extension/~/sms/opt-outs", $params);    
+try {    
     $resp = $sdk->platform()->get("/restapi/v1.0/account/~/a2p-sms/opt-outs", $params);    
+    echo "<pre>" ;
+    var_dump($resp->json());
+    echo "</pre>" ;
 } catch (\RingCentral\SDK\Http\ApiException $e) {    
     $apiResponse = $e->apiResponse();
     // craft a friendly message here.    
@@ -35,9 +35,5 @@ try {
     var_dump($apiResponse) ;
     echo "</pre>" ;
 }
-
-echo "<pre>" ;
-var_dump($resp->json());
-echo "</pre>" ;
 
 ?>

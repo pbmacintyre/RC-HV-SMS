@@ -20,17 +20,20 @@ if (is_object($sdk )) {
     exit();
 }
 
-/* now send a request to check the numbers */
+/* send a request to check the numbers */
 $resp = $sdk->platform()->get('/account/~/extension/~/phone-number');
 foreach ($resp->json()->records as $record){
     foreach ($record->features as $feature){
         if ($feature == "A2PSmsSender"){
-            if ($record->paymentType == "TollFree")
-                print_r ("This phone number " . $record->phoneNumber . " is a toll-free number and provisioned for using to send high volume SMS\n");
-            else
-                print_r ("This phone number " . $record->phoneNumber . " is a 10-DLC local number and provisioned for using to send high volume SMS\n");
-        }
-        echo "other numbers: " . $record->phoneNumber . "<br/><br/>" ;
+            echo "<br/>";
+            if ($record->paymentType == "TollFree") {
+                print_r ("This phone number " . $record->phoneNumber . " is a toll-free number and provisioned for using to send high volume SMS");
+            } else {
+                print_r ("This phone number " . $record->phoneNumber . " is a 10-DLC local number and provisioned for using to send high volume SMS");
+            }
+            echo "<br/>";
+        }        
+        echo "<br/>standard number: " . $record->phoneNumber . "<br/>" ;
     }
 }
 ?>

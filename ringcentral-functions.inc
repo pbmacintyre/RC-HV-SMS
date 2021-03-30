@@ -45,19 +45,7 @@ function ringcentral_invoke_sandbox_sdk() {
     // get an array of information to connect to the SDK
 
     $rc_handshake = sdk_sandbox_credentials();
-    echo "<pre>";
-    var_dump($rc_handshake);
-    echo "</pre>";
-    /* ============================= */    
-    $rcsdk = new RingCentral\SDK\SDK('H1A2heI0S9eYY8NxNb1Pug', 
-        't99-8eDRRPSmknVGTVG5IgwUw-49IxR-K6bCw_TvCLKg', 'https://platform.devtest.ringcentral.com');
-    $platform = $rcsdk->platform();
-    $platform->login('13128589925', '101', 'Char1tyMM');
-    /* ============================= */
-    echo "connection made... ";
-    
-//     $rc_handshake = sdk_sandbox_credentials();
-    
+            
     // Use sandbox Client
     $sdk = new RingCentral\SDK\SDK($rc_handshake['client_id'], 
         $rc_handshake['client_secret'], 'https://platform.devtest.ringcentral.com');    
@@ -67,11 +55,7 @@ function ringcentral_invoke_sandbox_sdk() {
         $sdk->platform()->login($rc_handshake['user_name'], 
             $rc_handshake['extension'], $rc_handshake['password']);
         $result = $sdk ;
-    } catch (\RingCentral\SDK\Http\ApiException $e) {
-        // $result = false ;
-        echo "<pre>";
-        var_dump($rc_handshake); 
-        echo "</pre>"; 
+    } catch (\RingCentral\SDK\Http\ApiException $e) {         
         $result = "<h2>Error connecting to the SDK, response information: </h2>" . $e ;
     }
     return $result ;    
@@ -106,13 +90,7 @@ function ringcentral_invoke_prod_sdk() {
     // get an array of information to connect to the SDK
     $rc_handshake = sdk_prod_credentials();
     
-    echo "<pre>";
-    var_dump($rc_handshake);
-    echo "</pre>";
-    
    // Use Production Client
-//    $sdk = new RingCentral\SDK\SDK($rc_handshake['client_id'],
-//         $rc_handshake['client_secret'], RingCentral\SDK\SDK::SERVER_PRODUCTION);
    $sdk = new RingCentral\SDK\SDK($rc_handshake['client_id'],
         $rc_handshake['client_secret'], 'https://platform.ringcentral.com');
 
@@ -122,10 +100,6 @@ function ringcentral_invoke_prod_sdk() {
             $rc_handshake['extension'], $rc_handshake['password']);
         $result = $sdk ;
     } catch (\RingCentral\SDK\Http\ApiException $e) {
-        // $result = false ;
-//     echo "<pre>";
-//     var_dump($rc_handshake);
-//     echo "</pre>";
         $result = "<h2>Error connecting to the SDK, response information: </h2>" . $e ;
     }
     return $result ;
@@ -134,7 +108,22 @@ function ringcentral_invoke_prod_sdk() {
 /* get from phone number from control table */
 /* it is stored in the user_name field      */
 /* ======================================== */
-function ringcentral_get_from_phone($control_id) {
+function ringcentral_get_sandbox_from_phone($control_id) {
+    global $db;
+
+    $sql = "SELECT `ringcentral_user_name`
+    FROM `ringcentral_control`
+    WHERE `ringcentral_control_id` = $control_id" ;
+    $result = $db->query($sql);
+    $row = $result->fetch_assoc() ;
+
+    return $row['ringcentral_user_name'] ;
+}
+/* ======================================== */
+/* get from phone number from control table */
+/* it is stored in the user_name field      */
+/* ======================================== */
+function ringcentral_get_prod_from_phone($control_id) {
     global $db;
     
     $sql = "SELECT `ringcentral_from` 
@@ -145,11 +134,12 @@ function ringcentral_get_from_phone($control_id) {
         
     return $row['ringcentral_from'] ;
 }
-/* ===================================== */
-/* Count all the text (bytes) in the     */ 
-/* outgoing array to ensure it is not    */
-/* over 50 MB - this is an estimate ONLY */
-/* ===================================== */
+/* ================================== */
+/* Count all the text (bytes) in the  */ 
+/* outgoing array to ensure it is not */
+/* over 50 MB (or set limit value     */
+/* this is an estimate ONLY           */
+/* ================================== */
 function get_MBs($requestBody, $testSize) {
     $bytes = 0 ;
     foreach ($requestBody as $value ){
